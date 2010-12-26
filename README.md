@@ -115,11 +115,63 @@ Use `er` when you want to access redis from erlang.
   translation layer between how redis views the world and how erlang views
   the world.
 
+A note on testing
+-----------------
+`er` is just an interface to redis.  We're more interested in testing
+the border between redis and erlang than testing redis itself.  We don't
+need the entire redis test suite imported yet. (Though, if you want to
+write a redis tcl test suite to eunit translator go right ahead.)
+
+Testing is the exploratory way `er` becomes more correct over time.  Find
+an untested redis command, use it, see the result.  Did it return the right
+value with the proper type?  Numbers got returned as N and not <<"N">>?
+True/False got returned as true/false and not 1/0?
+
+If the return types are wrong, jump into `include/redis-cmds.lfe` and
+update the return type for the command you are testing.
+
+If the redis command has optional arguments you may need to create
+multiple functions with varying airity.
+See anything using `withscores` as an example in `include/redis-cmds.lfe`.
+
+You can implement the same redis command multiple times but with different
+return types by specifying a unique function name.  See `hgetall_p` and
+`hgetall_k` in `include/redis-cmds.lfe` for an example.
+
+Testing new commands may require modifying the return type processing
+functions themselves in `include/redis-return-types.lfe`.  Jump in and
+make things better.
+
+Issues during testing to keep in mind:
+
+* rebar does not rebuild based on lfe includes.  Delete ebin/ to rebuild.
+* Does the return type make sense?
+  * No always-integers returned in binaries
+  * Redis errors throw exceptions instead of returning error tuples
+* Did your input get auto-converted to a binary and sent to redis?
+  * Can you read the same value back from redis?
+    * Everything-to-binary conversion functions are at the end of `src/er_redis.erl`
+* Test creation, read, update, read
+* Test edge cases and boundary conditions
+* Test error conditions
+* Test impossibles (see if you can crash redis)
+  * e.g. inf + -inf, nan + inf, -inf + 3, etc.
+* Will concurrent testing or fuzzing help?  Add test suites as necessary.
+
 Contributions
 -------------
 Want to help?  Patches welcome.
 
-* Poke around in `test/er_tests.erl` and add some missing tests.
+* Poke around in `test/er_tests.erl` and add some missing tests.  Ideas:
+  * Figure out how to implement `sort` nicely.
+  * Make `info` output pretty
+  * Test long-lived things
+    * publish/subscribe
+    * multi/exec/discard (what should the interface for those look like?)
+    * monitor
 * Write something to parse `include/er-cmds.lfe` and output docs for return types.
 * Make a nicer interface to pubsub and blocking calls.
+  * Spawn an owner process for them you send/receive erlang messages to/from?
+    * named?  unnamed?  how long lived?  auto-reconnect on errors/timeout?
+* Figure out why markdown isn't auto-linking my User/Project@Commit references like the docs say it should
 * Find a bug.  Fix a bug.

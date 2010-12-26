@@ -1,3 +1,12 @@
+;; include/redis-return-types.lfe
+;; What is this file?  Redis return type conversion functions.
+;; What are these (return-type * ...) sexps?
+;;   - I don't remember exactly.  It was going to be a way to auto-generate
+;;     something that didn't pan out.  The list hasn't been kept in sync with
+;;     redis-cmds.lfe.  They can probably all be deleted.
+;; Under these return-type declarations are the actual return conversion functions.
+;; The goal is to return as much actual information as possible so clients don't
+;;   have to needlessly unpack tuples that just say {ok, Value} or other nonsense.
 
 ;; create list of all return types available as (return-type::return-types)
 (return-type return-types

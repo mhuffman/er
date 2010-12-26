@@ -1,3 +1,8 @@
+;; include/redis-cmds.lfe
+;; What is this?  All redis commands and then some.
+;; This file gets directly included by src/er.lfe and src/erp.lfe
+;; Return macros come from include/utils-macro.lfe which must be included
+;;   before this file in src/er.lfe and src/erp.lfe.
 
 ;; cmd macros define the return value for native erlang conversion
 ;; redis-cmd-n = nil return
@@ -6,6 +11,9 @@
 ;; redis-cmd-l = line return
 ;; redis-cmd-b = bulk return
 ;; redis-cmd-m = multibulk return
+;; redis-cmd-m-pl = return a property list [{key, <<"value">>}, ..] (auto-atomize keys)
+;; redis-cmd-m-kl = return a key list [{<<"key">>, <<"value">>}, ...]
+;; redis-cmd-strip = convert things like {ok, Value} to Value
 ;; redis-cmd-o = other/special return
 ;; redis-cmd-i-tf = int return where 0 = false and 1 = true
 
