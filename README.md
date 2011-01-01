@@ -73,6 +73,22 @@ See files `include/{utils,utils-macro,redis-cmds,redis-return-types}.lfe`:
 * `redis-return-types.lfe` - an alternate format of specifying redis return types.
   Contains functions for converting redis return values to native types.
 
+eru
+---
+Module `eru` has utility functions to help you through your redis adventures.
+
+`eru:dump(Server)` --
+dump all keys and values from a server regardless of type.
+
+`eru:dump(Server, Key)` --
+print the key and value from a server regardless of type.
+
+`eru:er_key/1, eru:er_key/2, ..., eru:er_key/32` --
+create a formatted redis key. Accepts atoms, integers, lists, and binaries.
+example:
+`eru:er_key(this, <<"is">>, "a", gr, 8, key)` = `<<"this:is:a:gr:8:key">>`
+
+
 Building
 --------
 Download LFE:
@@ -165,6 +181,7 @@ Want to help?  Patches welcome.
 * Poke around in `test/er_tests.erl` and add some missing tests.  Ideas:
   * Figure out how to implement `sort` nicely.
   * Make `info` output pretty
+  * Test `eru`
   * Test long-lived things
     * publish/subscribe
     * multi/exec/discard (what should the interface for those look like?)
