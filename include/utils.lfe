@@ -2,7 +2,11 @@
 (defun a
   ((c) (when (is_list c)) (list_to_atom c))
   ((c) (when (is_atom c)) c)
+  ((c) (when (is_integer c)) (a (l c)))
   ((c) (when (is_binary c)) (a (binary_to_list c))))
+(defun la
+ ((c) (when (andalso (is_list c) (is_list (car c))))
+  (: lists map (fun a 1) c))) ;(lc ((<- element c)) (a element))))
 
 (defun mk-a (c d)
   (a (: lists flatten (cons (l c) (l d)))))
@@ -11,13 +15,21 @@
 (defun l
   ((c) (when (is_list c)) c)
   ((c) (when (is_atom c)) (atom_to_list c))
+  ((c) (when (is_integer c)) (integer_to_list c))
   ((c) (when (is_binary c)) (binary_to_list c)))
+(defun ll
+ ((c) (when (is_list c))
+  (: lists map (fun l 1) c))) ;(lc ((<- element c)) (l element))))
 
 ; turn anything reasonable into a binary
 (defun b
   ((c) (when (is_list c)) (list_to_binary c))
-  ((c) (when (is_atom c)) (b (atom_to_list c)))
+  ((c) (when (is_atom c)) (atom_to_binary c 'utf8))
+  ((c) (when (is_integer c)) (b (l c)))
   ((c) (when (is_binary c)) c))
+(defun bl
+ ((c) (when (is_list c))
+  (: lists map (fun b 1) c))) ;(lc ((<- element c)) (b element))))
 
 (defun mk-a-return-type (type)
   (mk-a 'return-type:: type))
