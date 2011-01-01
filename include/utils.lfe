@@ -31,6 +31,26 @@
  ((c) (when (is_list c))
   (: lists map (fun b 1) c))) ;(lc ((<- element c)) (b element))))
 
+(defun xn (n-times)
+ (xn '"a" n-times))
+; example: (xn '"a" 3) => (('"a") ('"a" '"aa") ('"a" '"aa" '"aaa"))
+(defun xn (what n-times)
+ ; map (1 2 3 ... n-times) to create:
+ ; ((what) (what whatwhat) (what whatwhat whatwhatwhat) ...)
+ (: lists map
+  (lambda (n)
+   (: lists flatten (: lists duplicate n what)))
+  (: lists seq 1 n-times)))
+;  (lc ((<- n (: lists seq 1 n-times))) (: lists flatten (: lists duplicate n what)))
+
+; example: (join-colon '('"hello" '"there" '"third")) => #b("hello:there:third")
+(defun join-colon
+ ((c) (when (andalso (is_list c) (is_list (car c)))) (b (: string join c '":"))))
+
+; splice args into correct positions to make the er_key functions
+(defun mk-key-fun (args)
+ `(defun er_key (,(la args) (join-colon (ll (list ,@(la args)))))))
+
 (defun mk-a-return-type (type)
   (mk-a 'return-type:: type))
 

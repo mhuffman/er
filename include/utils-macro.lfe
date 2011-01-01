@@ -19,5 +19,11 @@
 (redis-cmd -o     redis-return-special)
 (redis-cmd -i-tf  redis-return-integer-true-false)
 
+;  Here we make all er_key/{1..N} functions
+(defmacro make-key-generator-of-max-args (len)
+ (let* ((arg-names (: lists map (fun xn 1) (: lists seq 1 len)))
+        (fns (: lists map (fun mk-key-fun 1) arg-names)))
+  `(progn ,@fns)))
+
 (defmacro return-type (name redis-cmds)
   `(defun ,(mk-a-return-type name) () ',redis-cmds))

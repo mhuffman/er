@@ -1,6 +1,12 @@
 (defmodule eru
  (export all))
 
+(eval-when-compile
+  (include-file "include/utils.lfe"))
+
+(include-file "include/utils.lfe")
+(include-file "include/utils-macro.lfe")
+
 (defun dump_all (server)
  (dump server #b("*")))
 
@@ -19,3 +25,5 @@
  ((server key 'set)    (: er smembers server key))
  ((server key 'zset)   (: er zrevrange server key 0 (: er zcard server key)))
  ((server key 'hash)   (: er hgetall_k server key)))
+
+(make-key-generator-of-max-args 32)
